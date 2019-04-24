@@ -1,0 +1,6 @@
+name: GunGame
+main: tim03we\gungame\GunGame
+api: 3.0.0
+version: 1.2.1
+author: tim03we
+description: A MiniGame Plugin for PocketMine-MP

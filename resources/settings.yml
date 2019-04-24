@@ -1,0 +1,40 @@
+---
+# Please do not change this!
+version: 1.0.0
+
+# At which level should you no longer be able to receive kits?
+Maximum-Level: 3
+
+# Specify a percentage of the chance that you will lose many levels.
+# Default = 0.60
+Chance: 0.60
+
+# Which events should be activated and which should be deactivated?
+# Default = @all "false"
+events:
+    hunger: false
+    place: false
+    break: false
+    inv-move: false
+    drop: false
+    
+format:
+    chat: "§8[§c{level}§8] §7{player} §8> §f{msg}"
+    nametag: "§8[§c{level}§8] §7{player}"
+    
+    
+# Here you can change the messages.
+# {player} = The player is you
+# {level} = Your current level
+# {msg} = Your message
+# {killer} = Who killed you
+messages:
+    join: "{player} has entered the GunGame server."
+    quit: "{player} has left the GunGame server."
+    chat: "§8[§c{level}§8] §7{player} §8> §f{msg}"
+    nopvp: "PvP is disabled at the spawn area."
+    death: "{player} died!"
+    kill: "{player} was killed by {killer}."
+    reload: "Your levels were reset by a server reload."
+    max: "You have already reached the maximum level. Keep it up!"
+...

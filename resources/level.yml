@@ -1,0 +1,51 @@
+---
+# Please do not change this!
+version: 1.0.0
+
+# Here you can put your kits right, which are changed after each kill.
+# Important! Sub-IDs are not yet supported.
+0:
+  helmet:
+    id: 0
+  chestplate:
+    id: 0
+  leggings:
+    id: 0
+  boots:
+    id: 0
+  weapon:
+    id: 271
+1:
+  helmet:
+    id: 0
+  chestplate:
+    id: 0
+  leggings:
+    id: 0
+  boots:
+    id: 0
+  weapon:
+    id: 268
+2:
+  helmet:
+    id: 0
+  chestplate:
+    id: 299
+  leggings:
+    id: 0
+  boots:
+    id: 0
+  weapon:
+    id: 268
+3:
+  helmet:
+    id: 0
+  chestplate:
+    id: 299
+  leggings:
+    id: 0
+  boots:
+    id: 0
+  weapon:
+    id: 268
+...
