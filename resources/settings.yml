@@ -31,7 +31,6 @@ format:
 messages:
     join: "{player} has entered the GunGame server."
     quit: "{player} has left the GunGame server."
-    chat: "§8[§c{level}§8] §7{player} §8> §f{msg}"
     death: "{player} died!"
     kill: "{player} was killed by {killer}."
     reload: "Your levels were reset by a server reload."
