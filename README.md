@@ -1,4 +1,5 @@
-# GunGame
+<h1>GunGame<img src="http://imgur.com/tCTL2QD.png" height="64" width="64" align="left"></img></h1>
+<br />
 
 GunGame is a nice MiniGame that hasn't been seen often in the Minecraft Bedrock Edition scene before. That's why I want to give you one. This MiniGame also includes a self-configurable Config that allows you to customize the game to your needs.
 
