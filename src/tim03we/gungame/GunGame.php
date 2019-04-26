@@ -58,11 +58,6 @@ class GunGame extends PluginBase {
         $this->saveResource("level.yml");
         $this->saveResource("settings.yml");
         $this->configUpdater();
-        $this->getLogger()->notice("---------------------");
-        $this->getLogger()->notice("GunGame: Activated");
-        $this->getLogger()->notice("Version: 1.2.1");
-        $this->getLogger()->notice("Author: tim03we (PaltryGamer)");
-        $this->getLogger()->notice("---------------------");
     }
 
     public function onLoad()
@@ -144,6 +139,5 @@ class GunGame extends PluginBase {
 
     public function onDisable()
     {
-        $this->getLogger()->info("Plugin was disabled. By tim03we (PaltryGamer)");
     }
 }
