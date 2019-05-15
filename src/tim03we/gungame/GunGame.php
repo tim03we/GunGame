@@ -36,14 +36,13 @@ class GunGame extends PluginBase {
     public $maxLevel = 10;
 
     public function configUpdater(): void {
-        $cfg = new Config($this->getDataFolder() . "settings.yml", Config::YAML);
-        if($cfg->get("version") !== "1.0.0"){
+        if($this->cfg->get("version") !== "1.0.0"){
             rename($this->getDataFolder() . "settings.yml", $this->getDataFolder() . "settings_old.yml");
             $this->saveResource("settings.yml");
             $this->getLogger()->notice("We create a new settings.yml file for you.");
             $this->getLogger()->notice("Because the config version has changed. Your old configuration has been saved as settings_old.yml.");
         }
-        if($cfg->get("version") !== "1.0.0"){
+        if($this->cfg->get("version") !== "1.0.0"){
             rename($this->getDataFolder() . "level.yml", $this->getDataFolder() . "level_old.yml");
             $this->saveResource("level.yml");
             $this->getLogger()->notice("We create a new level.yml file for you.");
@@ -57,16 +56,17 @@ class GunGame extends PluginBase {
         $this->getScheduler()->scheduleRepeatingTask(new GGTask($this), 20);
         $this->saveResource("level.yml");
         $this->saveResource("settings.yml");
+        $this->cfg = new Config($this->getDataFolder() . "settings.yml", Config::YAML);
+        $this->lcfg = new Config($this->getDataFolder() . "level.yml", Config::YAML);
         $this->configUpdater();
     }
 
     public function onLoad()
     {
-        $cfg = new Config($this->getDataFolder() . "settings.yml", Config::YAML);
         foreach ($this->getServer()->getOnlinePlayers() as $player) {
             $this->levels[$player->getName()] = 0;
             $this->needLevel[$player->getName()] = 0;
-            $player->sendMessage($cfg->getNested("messages.reload"));
+            $player->sendMessage($this->cfg->getNested("messages.reload"));
         }
     }
 
@@ -77,35 +77,33 @@ class GunGame extends PluginBase {
     }
 
     public function levelChange(Player $player, int $level) {
-        $kit = new Config($this->getDataFolder() . "level.yml", Config::YAML);
-        $cfg = new Config($this->getDataFolder() . "settings.yml", Config::YAML);
         $this->invClear($player);
         $this->needLevel[$player->getName()] = 0;
         $currLevel = $this->levels[$player->getName()];
         $player->setXpLevel($currLevel);
         $player->setHealth(20);
-        $nametag = $cfg->getNested("format.nametag");
+        $nametag = $this->cfg->getNested("format.nametag");
         $nametag = str_replace("{player}", $player->getName(), $nametag);
         $nametag = str_replace("{level}", $currLevel, $nametag);
         $player->setNameTag($nametag);
-        if($cfg->get("Maximum-Level") < $currLevel) {
-            $player->sendMessage($cfg->getNested("messages.max"));
-            $helmet = Item::get($kit->getNested($kit->get("Maximum-Level").".helmet.id"), 0, 1);
-            $chestplate = Item::get($kit->getNested($kit->get("Maximum-Level").".chestplate.id"), 0, 1);
-            $leggings = Item::get($kit->getNested($kit->get("Maximum-Level").".leggings.id"), 0, 1);
-            $boots = Item::get($kit->getNested($kit->get("Maximum-Level").".boots.id"), 0, 1);
-            $weapon = Item::get($kit->getNested($kit->get("Maximum-Level").".weapon.id"), 0, 1);
+        if($this->cfg->get("Maximum-Level") < $currLevel) {
+            $player->sendMessage($this->cfg->getNested("messages.max"));
+            $helmet = Item::get($this->lcfg->getNested($this->lcfg->get("Maximum-Level").".helmet.id"), 0, 1);
+            $chestplate = Item::get($this->lcfg->getNested($this->lcfg->get("Maximum-Level").".chestplate.id"), 0, 1);
+            $leggings = Item::get($this->lcfg->getNested($this->lcfg->get("Maximum-Level").".leggings.id"), 0, 1);
+            $boots = Item::get($this->lcfg->getNested($this->lcfg->get("Maximum-Level").".boots.id"), 0, 1);
+            $weapon = Item::get($this->lcfg->getNested($this->lcfg->get("Maximum-Level").".weapon.id"), 0, 1);
             $player->getArmorInventory()->setHelmet($helmet);
             $player->getArmorInventory()->setChestplate($chestplate);
             $player->getArmorInventory()->setLeggings($leggings);
             $player->getArmorInventory()->setBoots($boots);
             $player->getInventory()->setItem(0, $weapon);
         } else {
-            $helmet = Item::get($kit->getNested($currLevel.".helmet.id"), 0, 1);
-            $chestplate = Item::get($kit->getNested($currLevel.".chestplate.id"), 0, 1);
-            $leggings = Item::get($kit->getNested($currLevel.".leggings.id"), 0, 1);
-            $boots = Item::get($kit->getNested($currLevel.".boots.id"), 0, 1);
-            $weapon = Item::get($kit->getNested($currLevel.".weapon.id"), 0, 1);
+            $helmet = Item::get($this->lcfg->getNested($currLevel.".helmet.id"), 0, 1);
+            $chestplate = Item::get($this->lcfg->getNested($currLevel.".chestplate.id"), 0, 1);
+            $leggings = Item::get($this->lcfg->getNested($currLevel.".leggings.id"), 0, 1);
+            $boots = Item::get($this->lcfg->getNested($currLevel.".boots.id"), 0, 1);
+            $weapon = Item::get($this->lcfg->getNested($currLevel.".weapon.id"), 0, 1);
             $player->getArmorInventory()->setHelmet($helmet);
             $player->getArmorInventory()->setChestplate($chestplate);
             $player->getArmorInventory()->setLeggings($leggings);
@@ -131,13 +129,8 @@ class GunGame extends PluginBase {
     }
 
     public function levelDown(Player $player) {
-        $cfg = new Config($this->getDataFolder() . "settings.yml", Config::YAML);
         $cL = $this->levels[$player->getName()];
-        $nL = intval($cL * $cfg->get("Chance"));
+        $nL = intval($cL * $this->cfg->get("Chance"));
         $this->levels[$player->getName()] = $nL;
-    }
-
-    public function onDisable()
-    {
     }
 }

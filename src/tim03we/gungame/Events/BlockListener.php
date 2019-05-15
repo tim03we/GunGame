@@ -36,8 +36,7 @@ class BlockListener implements Listener {
     }
 
     public function onBreak(BlockBreakEvent $event) {
-        $cfg = new Config($this->plugin->getDataFolder() . "settings.yml", Config::YAML);
-        if($cfg->getNested("events.break") == false) {
+        if($this->plugin->cfg->getNested("events.break") == false) {
             $event->setCancelled(true);
         } else {
             $event->setCancelled(false);
@@ -45,8 +44,7 @@ class BlockListener implements Listener {
     }
 
     public function onPlace(BlockPlaceEvent $event) {
-        $cfg = new Config($this->plugin->getDataFolder() . "settings.yml", Config::YAML);
-        if($cfg->getNested("events.place") == false) {
+        if($this->plugin->cfg->getNested("events.place") == false) {
             $event->setCancelled(true);
         } else {
             $event->setCancelled(false);

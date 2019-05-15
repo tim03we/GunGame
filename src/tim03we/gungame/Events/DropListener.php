@@ -35,8 +35,7 @@ class DropListener implements Listener {
     }
 
     public function onDrop(PlayerDropItemEvent $event) {
-        $cfg = new Config($this->plugin->getDataFolder() . "settings.yml", Config::YAML);
-        if($cfg->getNested("events.drop") == false) {
+        if($this->plugin->cfg->getNested("events.drop") == false) {
             $event->setCancelled(true);
         } else {
             $event->setCancelled(false);

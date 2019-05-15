@@ -35,9 +35,8 @@ class RespawnListener implements Listener {
     }
 
     public function onRespawn(PlayerRespawnEvent $event) {
-        $cfg = new Config($this->plugin->getDataFolder() . "settings.yml", Config::YAML);
         $player = $event->getPlayer();
-        $player->setGamemode((int)$cfg->get("Gamemode"));
+        $player->setGamemode((int)$this->plugin->cfg->get("Gamemode"));
         $this->plugin->needLevel[$player->getName()] = 1;
     }
 }

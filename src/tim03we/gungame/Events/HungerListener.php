@@ -35,8 +35,7 @@ class HungerListener implements Listener {
     }
 
     public function onHunger(PlayerExhaustEvent $event) {
-        $cfg = new Config($this->plugin->getDataFolder() . "settings.yml", Config::YAML);
-        if($cfg->getNested("events.hunger") == false) {
+        if($this->plugin->cfg->getNested("events.hunger") == false) {
             $event->setCancelled(true);
         } else {
             $event->setCancelled(false);

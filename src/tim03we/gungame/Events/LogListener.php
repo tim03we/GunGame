@@ -36,21 +36,18 @@ class LogListener implements Listener {
     }
 
     public function onJoin(PlayerJoinEvent $event) {
-        $cfg = new Config($this->plugin->getDataFolder() . "settings.yml", Config::YAML);
-        $level = new Config($this->plugin->getDataFolder() . "level.yml", Config::YAML);
         $player = $event->getPlayer();
         $this->plugin->levels[$player->getName()] = 0;
         $this->plugin->needLevel[$player->getName()] = 0;
         $this->plugin->levelChange($player, (int) 0);
-        $message = $cfg->getNested("messages.join");
+        $message = $this->plugin->cfg->getNested("messages.join");
         $message = str_replace("{player}", $player->getName(), $message);
         $event->setJoinMessage($message);
     }
 
     public function onQuit(PlayerQuitEvent $event) {
-        $cfg = new Config($this->plugin->getDataFolder() . "settings.yml", Config::YAML);
         $player = $event->getPlayer();
-        $message = $cfg->getNested("messages.quit");
+        $message = $this->plugin->cfg->getNested("messages.quit");
         $message = str_replace("{player}", $player->getName(), $message);
         $event->setQuitMessage($message);
     }

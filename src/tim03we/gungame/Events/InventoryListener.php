@@ -36,8 +36,7 @@ class InventoryListener implements Listener {
 
     public function onInventoryMove(InventoryTransactionEvent $event)
     {
-        $cfg = new Config($this->plugin->getDataFolder() . "settings.yml", Config::YAML);
-        if($cfg->getNested("events.inv-move") == false) {
+        if($this->plugin->cfg->getNested("events.inv-move") == false) {
             $event->setCancelled(true);
         } else {
             $event->setCancelled(false);
