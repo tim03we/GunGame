@@ -2,6 +2,10 @@
 # Please do not change this!
 version: 1.0.0
 
+# Important!
+# Don't let any armor parts disappear at the next level, or there will be problems later in the game.
+# Important!
+
 # Here you can put your kits right, which are changed after each kill.
 # Important! Sub-IDs are not yet supported.
 0:
