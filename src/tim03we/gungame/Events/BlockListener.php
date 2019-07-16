@@ -36,18 +36,22 @@ class BlockListener implements Listener {
     }
 
     public function onBreak(BlockBreakEvent $event) {
-        if($this->plugin->cfg->getNested("events.break") == false) {
-            $event->setCancelled(true);
-        } else {
-            $event->setCancelled(false);
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+            if($this->plugin->cfg->getNested("events.break") == false) {
+                $event->setCancelled(true);
+            } else {
+                $event->setCancelled(false);
+            }
         }
     }
 
     public function onPlace(BlockPlaceEvent $event) {
-        if($this->plugin->cfg->getNested("events.place") == false) {
-            $event->setCancelled(true);
-        } else {
-            $event->setCancelled(false);
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+            if($this->plugin->cfg->getNested("events.place") == false) {
+                $event->setCancelled(true);
+            } else {
+                $event->setCancelled(false);
+            }
         }
     }
 }

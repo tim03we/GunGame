@@ -1,6 +1,9 @@
 ---
 # Please do not change this!
-version: 1.0.0
+version: 1.1
+
+# Enter your worlds here, in which GunGame should take place.
+worlds: ["world", "world1"]
 
 # At which level should you no longer be able to receive kits?
 Maximum-Level: 3

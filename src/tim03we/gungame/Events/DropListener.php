@@ -35,10 +35,12 @@ class DropListener implements Listener {
     }
 
     public function onDrop(PlayerDropItemEvent $event) {
-        if($this->plugin->cfg->getNested("events.drop") == false) {
-            $event->setCancelled(true);
-        } else {
-            $event->setCancelled(false);
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+            if($this->plugin->cfg->getNested("events.drop") == false) {
+                $event->setCancelled(true);
+            } else {
+                $event->setCancelled(false);
+            }
         }
     }
 }

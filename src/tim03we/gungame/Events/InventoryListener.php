@@ -36,10 +36,12 @@ class InventoryListener implements Listener {
 
     public function onInventoryMove(InventoryTransactionEvent $event)
     {
-        if($this->plugin->cfg->getNested("events.inv-move") == false) {
-            $event->setCancelled(true);
-        } else {
-            $event->setCancelled(false);
+        if(in_array($event->getTransaction()->getSource()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+            if($this->plugin->cfg->getNested("events.inv-move") == false) {
+                $event->setCancelled(true);
+            } else {
+                $event->setCancelled(false);
+            }
         }
     }
 }

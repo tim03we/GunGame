@@ -35,8 +35,10 @@ class RespawnListener implements Listener {
     }
 
     public function onRespawn(PlayerRespawnEvent $event) {
-        $player = $event->getPlayer();
-        $player->setGamemode((int)$this->plugin->cfg->get("Gamemode"));
-        $this->plugin->needLevel[$player->getName()] = 1;
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+            $player = $event->getPlayer();
+            $player->setGamemode((int)$this->plugin->cfg->get("Gamemode"));
+            $this->plugin->needLevel[$player->getName()] = 1;
+        }
     }
 }

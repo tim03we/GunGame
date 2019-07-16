@@ -35,10 +35,12 @@ class HungerListener implements Listener {
     }
 
     public function onHunger(PlayerExhaustEvent $event) {
-        if($this->plugin->cfg->getNested("events.hunger") == false) {
-            $event->setCancelled(true);
-        } else {
-            $event->setCancelled(false);
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+            if($this->plugin->cfg->getNested("events.hunger") == false) {
+                $event->setCancelled(true);
+            } else {
+                $event->setCancelled(false);
+            }
         }
     }
 }
