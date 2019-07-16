@@ -7,6 +7,7 @@ GunGame is a nice MiniGame that hasn't been seen often in the Minecraft Bedrock 
 - Edit the game news
 - Activate or deactivate certain events
 - Change the chat format, as well as your nametag in the game
+- Multi World Support
 # Setup
 - Download the plugin as Phar or folder
 - Pack the plugin into the plugins folder
