@@ -136,7 +136,7 @@ class GunGame extends PluginBase {
         $currLevel = $this->levels[$player->getName()];
         $player->setXpLevel($currLevel);
         $player->setHealth(20);
-        $player->setNameTag(str_replace(["{level}", "{player}"], [$currLevel, $player->getName()], $this->getSettings("settings")->getNested("format.nametag")));
+        $player->setNameTag(str_replace(["{level}", "{player}"], [$currLevel, $player->getName()], $this->settingsDB->getNested("format.nametag")));
         if($this->settingsDB->get("Maximum-Level") < $currLevel) {
             $player->sendMessage($this->settingsDB->getNested("messages.max"));
             $player->getArmorInventory()->setHelmet(Item::get($this->levelDB->getNested($this->levelDB->get("Maximum-Level").".helmet.id"), 0, 1));
