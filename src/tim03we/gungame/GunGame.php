@@ -82,13 +82,13 @@ class GunGame extends PluginBase {
         if($this->settingsDB->getNested("events.inv-move") == false) {
             $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\InventoryListener($this), $this);
         }
-        if($this->settingsDB->getNested("events.important.entity") == false) {
+        if($this->settingsDB->getNested("events.important.entity") == true) {
             $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\EntityListener($this), $this);
         }
-        if($this->settingsDB->getNested("events.important.log") == false) {
+        if($this->settingsDB->getNested("events.important.log") == true) {
             $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\LogListener($this), $this);
         }
-        if($this->settingsDB->getNested("events.important.respawn") == false) {
+        if($this->settingsDB->getNested("events.important.respawn") == true) {
             $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\RespawnListener($this), $this);
         }
         if($this->settingsDB->getNested("events.important.chat") == true) {
