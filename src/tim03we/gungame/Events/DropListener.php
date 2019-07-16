@@ -29,14 +29,16 @@ use tim03we\gungame\GunGame;
 
 class DropListener implements Listener {
 
+    public $plugin;
+
     public function __construct(GunGame $plugin)
     {
         $this->plugin = $plugin;
     }
 
     public function onDrop(PlayerDropItemEvent $event) {
-        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
-            if($this->plugin->cfg->getNested("events.drop") == false) {
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->settingsDB->get("worlds"))) {
+            if($this->plugin->settingsDB->getNested("events.drop") == false) {
                 $event->setCancelled(true);
             } else {
                 $event->setCancelled(false);

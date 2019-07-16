@@ -30,27 +30,29 @@ use tim03we\gungame\GunGame;
 
 class LogListener implements Listener {
 
+    public $plugin;
+
     public function __construct(GunGame $plugin)
     {
         $this->plugin = $plugin;
     }
 
     public function onJoin(PlayerJoinEvent $event) {
-        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->settingsDB->get("worlds"))) {
             $player = $event->getPlayer();
             $this->plugin->levels[$player->getName()] = 0;
             $this->plugin->needLevel[$player->getName()] = 0;
             $this->plugin->levelChange($player, (int) 0);
-            $message = $this->plugin->cfg->getNested("messages.join");
+            $message = $this->plugin->settingsDB->getNested("messages.join");
             $message = str_replace("{player}", $player->getName(), $message);
             $event->setJoinMessage($message);
         }
     }
 
     public function onQuit(PlayerQuitEvent $event) {
-        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->settingsDB->get("worlds"))) {
             $player = $event->getPlayer();
-            $message = $this->plugin->cfg->getNested("messages.quit");
+            $message = $this->plugin->settingsDB->getNested("messages.quit");
             $message = str_replace("{player}", $player->getName(), $message);
             $event->setQuitMessage($message);
         }

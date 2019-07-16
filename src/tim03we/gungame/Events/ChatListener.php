@@ -29,18 +29,18 @@ use tim03we\gungame\GunGame;
 
 class ChatListener implements Listener {
 
+    public $plugin;
+
     public function __construct(GunGame $plugin)
     {
         $this->plugin = $plugin;
     }
 
     public function onChat(PlayerChatEvent $event) {
-        if($this->plugin->cfg->getNested("events.hunger") == true) {
+        if($this->plugin->settingsDB->getNested("events.hunger") == true) {
             $message = $event->getMessage();
             $player = $event->getPlayer();
-            $replace = $this->plugin->cfg->getNested("format.chat");
-            $replace = str_replace(["{player}", "{msg}", "{level}"], [$player->getName(), $message, $this->plugin->levels[$player->getName()]], $replace);
-            $event->setFormat($replace);
+            $event->setFormat(str_replace(["{player}", "{msg}", "{level}"], [$player->getName(), $message, $this->plugin->levels[$player->getName()]], $this->plugin->settingsDB->getNested("format.chat")));
         }
     }
 }

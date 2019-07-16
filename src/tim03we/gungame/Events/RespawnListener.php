@@ -29,15 +29,17 @@ use tim03we\gungame\GunGame;
 
 class RespawnListener implements Listener {
 
+    public $plugin;
+
     public function __construct(GunGame $plugin)
     {
         $this->plugin = $plugin;
     }
 
     public function onRespawn(PlayerRespawnEvent $event) {
-        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->settingsDB->get("worlds"))) {
             $player = $event->getPlayer();
-            $player->setGamemode((int)$this->plugin->cfg->get("Gamemode"));
+            $player->setGamemode((int)$this->plugin->settingsDB->get("Gamemode"));
             $this->plugin->needLevel[$player->getName()] = 1;
         }
     }

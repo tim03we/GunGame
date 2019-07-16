@@ -29,6 +29,8 @@ use tim03we\gungame\GunGame;
 
 class InventoryListener implements Listener {
 
+    public $plugin;
+
     public function __construct(GunGame $plugin)
     {
         $this->plugin = $plugin;
@@ -36,8 +38,8 @@ class InventoryListener implements Listener {
 
     public function onInventoryMove(InventoryTransactionEvent $event)
     {
-        if(in_array($event->getTransaction()->getSource()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
-            if($this->plugin->cfg->getNested("events.inv-move") == false) {
+        if(in_array($event->getTransaction()->getSource()->getLevel()->getName(), $this->plugin->settingsDB->get("worlds"))) {
+            if($this->plugin->settingsDB->getNested("events.inv-move") == false) {
                 $event->setCancelled(true);
             } else {
                 $event->setCancelled(false);

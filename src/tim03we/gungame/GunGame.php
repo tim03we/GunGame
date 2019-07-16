@@ -33,16 +33,16 @@ class GunGame extends PluginBase {
 
     public $levels = [];
     public $needLevel = [];
-    public $maxLevel = 10;
+    public $settingsDB, $levelDB;
 
     public function configUpdater(): void {
-        if($this->cfg->get("version") !== "1.1.1"){
+        if($this->settingsDB->get("version") !== "1.2"){
             rename($this->getDataFolder() . "settings.yml", $this->getDataFolder() . "settings_old.yml");
             $this->saveResource("settings.yml");
             $this->getLogger()->notice("We create a new settings.yml file for you.");
             $this->getLogger()->notice("Because the config version has changed. Your old configuration has been saved as settings_old.yml.");
         }
-        if($this->cfg->get("version") !== "1.0.0"){
+        if($this->settingsDB->get("version") !== "1.0.0"){
             rename($this->getDataFolder() . "level.yml", $this->getDataFolder() . "level_old.yml");
             $this->saveResource("level.yml");
             $this->getLogger()->notice("We create a new level.yml file for you.");
@@ -50,25 +50,79 @@ class GunGame extends PluginBase {
         }
     }
 
-    public function onEnable()
-    {
-        $this->register();
-        $this->getScheduler()->scheduleRepeatingTask(new GGTask($this), 20);
-        $this->saveResource("level.yml");
-        $this->saveResource("settings.yml");
-        $this->cfg = new Config($this->getDataFolder() . "settings.yml", Config::YAML);
-        $this->lcfg = new Config($this->getDataFolder() . "level.yml", Config::YAML);
-        $this->configUpdater();
-    }
-
     public function onLoad()
     {
         foreach ($this->getServer()->getOnlinePlayers() as $player) {
             $this->levels[$player->getName()] = 0;
             $this->needLevel[$player->getName()] = 0;
-            $player->sendMessage($this->cfg->getNested("messages.reload"));
+            $player->sendMessage($this->settingsDB->getNested("messages.reload"));
         }
     }
+
+    public function onEnable()
+    {
+        $this->initConfigs();
+        $this->configUpdater();
+        $this->initOptions();
+        $this->initWorlds();
+        $this->getScheduler()->scheduleRepeatingTask(new GGTask($this), 20);
+        $this->settingsDB = new Config($this->getDataFolder() . "settings.yml", Config::YAML);
+        $this->levelDB = new Config($this->getDataFolder() . "level.yml", Config::YAML);
+    }
+
+    public function initOptions()
+    {
+        if($this->settingsDB->getNested("events.place") == false && $this->settingsDB->getNested("events.break") == false) {
+            $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\BlockListener($this), $this);
+        }
+        if($this->settingsDB->getNested("events.hunger") == false) {
+            $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\HungerListener($this), $this);
+        }
+        if($this->settingsDB->getNested("events.drop") == false) {
+            $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\DropListener($this), $this);
+        }
+        if($this->settingsDB->getNested("events.inv-move") == false) {
+            $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\InventoryListener($this), $this);
+        }
+        if($this->settingsDB->getNested("events.important.entity") == false) {
+            $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\EntityListener($this), $this);
+        }
+        if($this->settingsDB->getNested("events.important.log") == false) {
+            $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\LogListener($this), $this);
+        }
+        if($this->settingsDB->getNested("events.important.respawn") == false) {
+            $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\RespawnListener($this), $this);
+        }
+        if($this->settingsDB->getNested("events.important.chat") == true) {
+            $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\ChatListener($this), $this);
+        }
+    }
+
+    public function initWorlds()
+    {
+        try {
+            if(is_array($this->settingsDB->get("worlds"))) {
+                foreach ($this->settingsDB->get("worlds") as $world) {
+                    $this->getServer()->loadLevel($world);
+                }
+            } else {
+                $this->getServer()->loadLevel($this->settingsDB->get("worlds"));
+            }
+        } catch (\Throwable $exception) {
+            $this->getLogger()->error($exception);
+        }
+    }
+
+    public function initConfigs()
+    {
+        if (!file_exists($this->getDataFolder() . "settings.yml")) {
+            $this->saveResource("settings.yml");
+        }
+        if (!file_exists($this->getDataFolder() . "level.yml")) {
+            $this->saveResource("level.yml");
+        }
+    }
+
 
     public function invClear(Player $player) {
         $player->getArmorInventory()->clearAll();
@@ -82,45 +136,21 @@ class GunGame extends PluginBase {
         $currLevel = $this->levels[$player->getName()];
         $player->setXpLevel($currLevel);
         $player->setHealth(20);
-        $nametag = $this->cfg->getNested("format.nametag");
-        $nametag = str_replace("{player}", $player->getName(), $nametag);
-        $nametag = str_replace("{level}", $currLevel, $nametag);
-        $player->setNameTag($nametag);
-        if($this->cfg->get("Maximum-Level") < $currLevel) {
-            $player->sendMessage($this->cfg->getNested("messages.max"));
-            $helmet = Item::get($this->lcfg->getNested($this->lcfg->get("Maximum-Level").".helmet.id"), 0, 1);
-            $chestplate = Item::get($this->lcfg->getNested($this->lcfg->get("Maximum-Level").".chestplate.id"), 0, 1);
-            $leggings = Item::get($this->lcfg->getNested($this->lcfg->get("Maximum-Level").".leggings.id"), 0, 1);
-            $boots = Item::get($this->lcfg->getNested($this->lcfg->get("Maximum-Level").".boots.id"), 0, 1);
-            $weapon = Item::get($this->lcfg->getNested($this->lcfg->get("Maximum-Level").".weapon.id"), 0, 1);
-            $player->getArmorInventory()->setHelmet($helmet);
-            $player->getArmorInventory()->setChestplate($chestplate);
-            $player->getArmorInventory()->setLeggings($leggings);
-            $player->getArmorInventory()->setBoots($boots);
-            $player->getInventory()->setItem(0, $weapon);
+        $player->setNameTag(str_replace(["{level}", "{player}"], [$currLevel, $player->getName()], $this->getSettings("settings")->getNested("format.nametag")));
+        if($this->settingsDB->get("Maximum-Level") < $currLevel) {
+            $player->sendMessage($this->settingsDB->getNested("messages.max"));
+            $player->getArmorInventory()->setHelmet(Item::get($this->levelDB->getNested($this->levelDB->get("Maximum-Level").".helmet.id"), 0, 1));
+            $player->getArmorInventory()->setChestplate(Item::get($this->levelDB->getNested($this->levelDB->get("Maximum-Level").".chestplate.id"), 0, 1));
+            $player->getArmorInventory()->setLeggings(Item::get($this->levelDB->getNested($this->levelDB->get("Maximum-Level").".leggings.id"), 0, 1));
+            $player->getArmorInventory()->setBoots(Item::get($this->levelDB->getNested($this->levelDB->get("Maximum-Level").".boots.id"), 0, 1));
+            $player->getInventory()->setItem(0, Item::get($this->levelDB->getNested($this->levelDB->get("Maximum-Level").".weapon.id"), 0, 1));
         } else {
-            $helmet = Item::get($this->lcfg->getNested($currLevel.".helmet.id"), 0, 1);
-            $chestplate = Item::get($this->lcfg->getNested($currLevel.".chestplate.id"), 0, 1);
-            $leggings = Item::get($this->lcfg->getNested($currLevel.".leggings.id"), 0, 1);
-            $boots = Item::get($this->lcfg->getNested($currLevel.".boots.id"), 0, 1);
-            $weapon = Item::get($this->lcfg->getNested($currLevel.".weapon.id"), 0, 1);
-            $player->getArmorInventory()->setHelmet($helmet);
-            $player->getArmorInventory()->setChestplate($chestplate);
-            $player->getArmorInventory()->setLeggings($leggings);
-            $player->getArmorInventory()->setBoots($boots);
-            $player->getInventory()->setItem(0, $weapon);
+            $player->getArmorInventory()->setHelmet(Item::get($this->levelDB->getNested($currLevel.".helmet.id"), 0, 1));
+            $player->getArmorInventory()->setChestplate(Item::get($this->levelDB->getNested($currLevel.".chestplate.id"), 0, 1));
+            $player->getArmorInventory()->setLeggings(Item::get($this->levelDB->getNested($currLevel.".leggings.id"), 0, 1));
+            $player->getArmorInventory()->setBoots(Item::get($this->levelDB->getNested($currLevel.".boots.id"), 0, 1));
+            $player->getInventory()->setItem(0, Item::get($this->levelDB->getNested($currLevel.".weapon.id"), 0, 1));
         }
-    }
-
-    public function register() {
-        $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\ChatListener($this), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\HungerListener($this), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\LogListener($this), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\BlockListener($this), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\EntityListener($this), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\InventoryListener($this), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\RespawnListener($this), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new \tim03we\gungame\Events\DropListener($this), $this);
     }
 
     public function levelUp(Player $player) {
@@ -130,7 +160,7 @@ class GunGame extends PluginBase {
 
     public function levelDown(Player $player) {
         $cL = $this->levels[$player->getName()];
-        $nL = intval($cL * $this->cfg->get("Chance"));
+        $nL = intval($cL * $this->settingsDB->get("Chance"));
         $this->levels[$player->getName()] = $nL;
     }
 }

@@ -29,13 +29,15 @@ use tim03we\gungame\GunGame;
 
 class HungerListener implements Listener {
 
+    public $plugin;
+
     public function __construct(GunGame $plugin)
     {
         $this->plugin = $plugin;
     }
 
     public function onHunger(PlayerExhaustEvent $event) {
-        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->settingsDB->get("worlds"))) {
             if($this->plugin->cfg->getNested("events.hunger") == false) {
                 $event->setCancelled(true);
             } else {

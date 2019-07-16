@@ -35,13 +35,15 @@ use tim03we\gungame\GunGame;
 
 class EntityListener implements Listener {
 
+    public $plugin;
+
     public function __construct(GunGame $plugin)
     {
         $this->plugin = $plugin;
     }
 
     public function onMove(PlayerMoveEvent $event) {
-        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->settingsDB->get("worlds"))) {
             $player = $event->getPlayer();
             $x = intval($player->getX());
             $y = intval($player->getY());
@@ -58,10 +60,7 @@ class EntityListener implements Listener {
                             KDR::getInstance()->getProvider()->addKillPoints($damager, 1);
                         }
                         $player->attack(new EntityDamageEvent($player, EntityDamageEvent::CAUSE_CUSTOM, 1000));
-                        $message = $this->plugin->cfg->getNested("messages.kill");
-                        $message = str_replace("{player}", $player->getName(), $message);
-                        $message = str_replace("{killer}", $damager->getName(), $message);
-                        $this->plugin->getServer()->broadcastMessage($message);
+                        $this->plugin->getServer()->broadcastMessage(str_replace(["{killer}", "{player}"], [$damager->getName(), $player->getName()], $this->plugin->settingsDB->getNested("messages.kill")));
                     }
                 } else {
                     $player->attack(new EntityDamageEvent($player, EntityDamageEvent::CAUSE_DROWNING, 1000));
@@ -71,7 +70,7 @@ class EntityListener implements Listener {
     }
 
     public function onDamage(EntityDamageEvent $event) {
-        if(in_array($event->getEntity()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+        if(in_array($event->getEntity()->getLevel()->getName(), $this->plugin->settingsDB->get("worlds"))) {
             $player = $event->getEntity();
             if($player instanceof Player) {
                 $cause = $event->getCause();
@@ -83,14 +82,12 @@ class EntityListener implements Listener {
     }
 
     public function onDeath(PlayerDeathEvent $event) {
-        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->settingsDB->get("worlds"))) {
             $event->setDrops([]);
             $player = $event->getEntity();
             if($player instanceof Player) {
                 $player->setXpLevel(0);
-                $message = $this->plugin->cfg->getNested("messages.death");
-                $message = str_replace("{player}", $player->getName(), $message);
-                $event->setDeathMessage($message);
+                $event->setDeathMessage(str_replace("{player}", $player->getName(), $this->plugin->settingsDB->getNested("messages.death")));
                 $this->plugin->levelDown($player);
             }
             $cause = $player->getLastDamageCause();
@@ -98,10 +95,7 @@ class EntityListener implements Listener {
                 $damager = $cause->getDamager();
                 if($damager instanceof Player) {
                     $this->plugin->levelUp($damager);
-                    $message2 = $this->plugin->cfg->getNested("messages.kill");
-                    $message2 = str_replace("{player}", $player->getName(), $message2);
-                    $message2 = str_replace("{killer}", $damager->getName(), $message2);
-                    $event->setDeathMessage($message2);
+                    $event->setDeathMessage(str_replace(["{killer}", "{player}"], [$damager->getName(), $player->getName()], $this->plugin->settingsDB->getNested("messages.kill")));
                 }
             }
             if($cause->getCause() === EntityDamageEvent::CAUSE_CUSTOM) {

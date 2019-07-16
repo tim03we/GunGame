@@ -1,9 +1,12 @@
 ---
 # Please do not change this!
-version: 1.1.1
+version: 1.2
 
 # Enter your worlds here, in which GunGame should take place.
 worlds: ["world", "world1"]
+
+# The gamemode in which the player is to be transferred to
+Gamemode: 2
 
 # At which level should you no longer be able to receive kits?
 Maximum-Level: 3
@@ -20,7 +23,11 @@ events:
     break: false
     inv-move: false
     drop: false
-    chat: true
+    important:
+        chat: true
+        log: true
+        entity: true
+        respawn: true
     
 format:
     chat: "§8[§c{level}§8] §7{player} §8> §f{msg}"

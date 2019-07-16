@@ -25,7 +25,6 @@ namespace tim03we\gungame\Events;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\Listener;
-use pocketmine\utils\Config;
 use tim03we\gungame\GunGame;
 
 class BlockListener implements Listener {
@@ -36,8 +35,8 @@ class BlockListener implements Listener {
     }
 
     public function onBreak(BlockBreakEvent $event) {
-        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
-            if($this->plugin->cfg->getNested("events.break") == false) {
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->settingsDB->get("worlds"))) {
+            if($this->plugin->settingsDB->getNested("events.break") == false) {
                 $event->setCancelled(true);
             } else {
                 $event->setCancelled(false);
@@ -46,8 +45,8 @@ class BlockListener implements Listener {
     }
 
     public function onPlace(BlockPlaceEvent $event) {
-        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->cfg->get("worlds"))) {
-            if($this->plugin->cfg->getNested("events.place") == false) {
+        if(in_array($event->getPlayer()->getLevel()->getName(), $this->plugin->settingsDB->get("worlds"))) {
+            if($this->plugin->settingsDB->getNested("events.place") == false) {
                 $event->setCancelled(true);
             } else {
                 $event->setCancelled(false);
