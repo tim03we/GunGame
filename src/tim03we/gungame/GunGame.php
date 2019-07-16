@@ -66,8 +66,6 @@ class GunGame extends PluginBase {
         $this->initOptions();
         $this->initWorlds();
         $this->getScheduler()->scheduleRepeatingTask(new GGTask($this), 20);
-        $this->settingsDB = new Config($this->getDataFolder() . "settings.yml", Config::YAML);
-        $this->levelDB = new Config($this->getDataFolder() . "level.yml", Config::YAML);
     }
 
     public function initOptions()
@@ -121,6 +119,8 @@ class GunGame extends PluginBase {
         if (!file_exists($this->getDataFolder() . "level.yml")) {
             $this->saveResource("level.yml");
         }
+        $this->settingsDB = new Config($this->getDataFolder() . "settings.yml", Config::YAML);
+        $this->levelDB = new Config($this->getDataFolder() . "level.yml", Config::YAML);
     }
 
 
