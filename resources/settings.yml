@@ -1,6 +1,6 @@
 ---
 # Please do not change this!
-version: 1.1
+version: 1.1.1
 
 # Enter your worlds here, in which GunGame should take place.
 worlds: ["world", "world1"]
@@ -20,6 +20,7 @@ events:
     break: false
     inv-move: false
     drop: false
+    chat: true
     
 format:
     chat: "§8[§c{level}§8] §7{player} §8> §f{msg}"

@@ -35,12 +35,12 @@ class ChatListener implements Listener {
     }
 
     public function onChat(PlayerChatEvent $event) {
-        $message = $event->getMessage();
-        $player = $event->getPlayer();
-        $replace = $this->plugin->cfg->getNested("format.chat");
-        $replace = str_replace("{player}", $player->getName(), $replace);
-        $replace = str_replace("{msg}", $message, $replace);
-        $replace = str_replace("{level}", $this->plugin->levels[$player->getName()], $replace);
-        $event->setFormat($replace);
+        if($this->plugin->cfg->getNested("events.hunger") == true) {
+            $message = $event->getMessage();
+            $player = $event->getPlayer();
+            $replace = $this->plugin->cfg->getNested("format.chat");
+            $replace = str_replace(["{player}", "{msg}", "{level}"], [$player->getName(), $message, $this->plugin->levels[$player->getName()]], $replace);
+            $event->setFormat($replace);
+        }
     }
 }
