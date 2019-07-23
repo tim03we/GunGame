@@ -36,13 +36,13 @@ class GunGame extends PluginBase {
     public $settingsDB, $levelDB;
 
     public function configUpdater(): void {
-        if($this->settingsDB->get("version") !== "1.2"){
+        if($this->settingsDB->get("version") != "1.2"){
             rename($this->getDataFolder() . "settings.yml", $this->getDataFolder() . "settings_old.yml");
             $this->saveResource("settings.yml");
             $this->getLogger()->notice("We create a new settings.yml file for you.");
             $this->getLogger()->notice("Because the config version has changed. Your old configuration has been saved as settings_old.yml.");
         }
-        if($this->settingsDB->get("version") !== "1.0.0"){
+        if($this->levelDB->get("version") != "1.0.0"){
             rename($this->getDataFolder() . "level.yml", $this->getDataFolder() . "level_old.yml");
             $this->saveResource("level.yml");
             $this->getLogger()->notice("We create a new level.yml file for you.");
